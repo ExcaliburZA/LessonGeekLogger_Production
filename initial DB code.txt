@@ -1,0 +1,368 @@
+
+C:\Users\user>mongosh mongodb+srv://lessongeek.jehaxbl.mongodb.net/LessonGeek --apiVersion 1 --username adminsam
+Enter password: ***********
+Current Mongosh Log ID: 63848196dafad05c17795146
+Connecting to:          mongodb+srv://<credentials>@lessongeek.jehaxbl.mongodb.net/LessonGeek?appName=mongosh+1.6.0
+Using MongoDB:          5.0.14 (API Version 1)
+Using Mongosh:          1.6.0
+
+For mongosh info see: https://docs.mongodb.com/mongodb-shell/
+
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.insertOne({name: "Dani Lubbe" , ID: "123456789" , phone_no: "0614130436" ,email: "Danicatlubbe@icloud.com" , account_no: "987654321" , university: "University of Cape Town" , course_name: "Bachelor's Degree in Geomatics" , date_of_birth: ISODate("2000-07-06T00:00:00Z") , approved: true});
+{
+  acknowledged: true,
+  insertedId: ObjectId("638485b780696d7a196af3b4")
+}
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.find()
+[
+  {
+    _id: ObjectId("638485b780696d7a196af3b4"),
+    name: 'Dani Lubbe',
+    ID: '123456789',
+    phone_no: '0614130436',
+    email: 'Danicatlubbe@icloud.com',
+    account_no: '987654321',
+    university: 'University of Cape Town',
+    course_name: "Bachelor's Degree in Geomatics",
+    date_of_birth: ISODate("2000-07-06T00:00:00.000Z"),
+    approved: true
+  }
+]
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.find().pretty()
+[
+  {
+    _id: ObjectId("638485b780696d7a196af3b4"),
+    name: 'Dani Lubbe',
+    ID: '123456789',
+    phone_no: '0614130436',
+    email: 'Danicatlubbe@icloud.com',
+    account_no: '987654321',
+    university: 'University of Cape Town',
+    course_name: "Bachelor's Degree in Geomatics",
+    date_of_birth: ISODate("2000-07-06T00:00:00.000Z"),
+    approved: true
+  }
+]
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.insertOne({name: "Dani Lubbe" , ID: "123456789" , phone_no: "0614130436" ,email: "Danicatlubbe@icloud.com" , account_no: "987654321" , university: "University of Cape Town" , course_name: "Bachelor's Degree in Geomatics" , date_of_birth: ISODate("2000-07-06T00:00:00Z") , approved: true , role: "admin"});
+{
+  acknowledged: true,
+  insertedId: ObjectId("638486fb80696d7a196af3b5")
+}
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.deleteOne({name: {$eq: "Dani Lubbe"}});
+{ acknowledged: true, deletedCount: 1 }
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.find().pretty()
+[
+  {
+    _id: ObjectId("638486fb80696d7a196af3b5"),
+    name: 'Dani Lubbe',
+    ID: '123456789',
+    phone_no: '0614130436',
+    email: 'Danicatlubbe@icloud.com',
+    account_no: '987654321',
+    university: 'University of Cape Town',
+    course_name: "Bachelor's Degree in Geomatics",
+    date_of_birth: ISODate("2000-07-06T00:00:00.000Z"),
+    approved: true,
+    role: 'admin'
+  }
+]
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.updateOne({name: {$eq: "Dani Lubbe"} , {$set: {date_of_birth: ISODate("2000-07-06")}}});
+Uncaught:
+SyntaxError: Unexpected token (1:48)
+
+> 1 | db.users.updateOne({name: {$eq: "Dani Lubbe"} , {$set: {date_of_birth: ISODate("2000-07-06")}}});
+    |                                                 ^
+  2 |
+
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.updateOne({name:"Dani Lubbe" , {$set: {date_of_birth: ISODate("2000-07-06")}}});
+Uncaught:
+SyntaxError: Unexpected token (1:40)
+
+> 1 | db.users.updateOne({name:"Dani Lubbe" , {$set: {date_of_birth: ISODate("2000-07-06")}}});
+    |                                         ^
+  2 |
+
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.updateOne({name:"Dani Lubbe"} , {$set: {date_of_birth: ISODate("2000-07-06")}});
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.find().pretty()
+[
+  {
+    _id: ObjectId("638486fb80696d7a196af3b5"),
+    name: 'Dani Lubbe',
+    ID: '123456789',
+    phone_no: '0614130436',
+    email: 'Danicatlubbe@icloud.com',
+    account_no: '987654321',
+    university: 'University of Cape Town',
+    course_name: "Bachelor's Degree in Geomatics",
+    date_of_birth: ISODate("2000-07-06T00:00:00.000Z"),
+    approved: true,
+    role: 'admin'
+  }
+]
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.updateOne({name:"Dani Lubbe"} , {$set: {date_of_birth: ISODate("2000-07-06")}});
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.updateOne({name:"Dani Lubbe"} , {$set: {date_of_birth: ISODate("2000-07-06T11:00:00Z")}});
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.find().pretty()
+[
+  {
+    _id: ObjectId("638486fb80696d7a196af3b5"),
+    name: 'Dani Lubbe',
+    ID: '123456789',
+    phone_no: '0614130436',
+    email: 'Danicatlubbe@icloud.com',
+    account_no: '987654321',
+    university: 'University of Cape Town',
+    course_name: "Bachelor's Degree in Geomatics",
+    date_of_birth: ISODate("2000-07-06T11:00:00.000Z"),
+    approved: true,
+    role: 'admin'
+  }
+]
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.logs.insertOne({date: ISODate("2022-11-20T00:00:00Z") , hours: 3 , student_name: "Jarryd Marle" , tutor_name: "Dani Lubbe" , lesson_type: "face to face"});
+{
+  acknowledged: true,
+  insertedId: ObjectId("63848ac580696d7a196af3b6")
+}
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.logs.find(0
+... );
+[
+  {
+    _id: ObjectId("63848ac580696d7a196af3b6"),
+    date: ISODate("2022-11-20T00:00:00.000Z"),
+    hours: 3,
+    student_name: 'Jarryd Marle',
+    tutor_name: 'Dani Lubbe',
+    lesson_type: 'face to face'
+  }
+]
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.logs.insertOne({date: ISODate , hours: 3 , student_name: "Jarryd Marle" , tutor_name: "Dani Lubbe" , lesson_type: "face to face"});
+{
+  acknowledged: true,
+  insertedId: ObjectId("63848ae580696d7a196af3b7")
+}
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.logs.find();
+[
+  {
+    _id: ObjectId("63848ac580696d7a196af3b6"),
+    date: ISODate("2022-11-20T00:00:00.000Z"),
+    hours: 3,
+    student_name: 'Jarryd Marle',
+    tutor_name: 'Dani Lubbe',
+    lesson_type: 'face to face'
+  },
+  {
+    _id: ObjectId("63848ae580696d7a196af3b7"),
+    date: Code("function ISODate(input) {
+          if (!input) input = new Date().toISOString();
+          const isoDateRegex = /^(?<Y>\d{4})-?(?<M>\d{2})-?(?<D>\d{2})([T ](?<h>\d{2})(:?(?<m>\d{2})(:?((?<s>\d{2})(\.(?<ms>\d+))?))?)?(?<tz>Z|([+-])(\d{2}):?(\d{2})?)?)?$/;
+          const match = input.match(isoDateRegex);
+
+          if (match !== null && match.groups !== undefined) {
+            const {
+              Y,
+              M,
+              D,
+              h,
+              m,
+              s,
+              ms,
+              tz
+            } = match.groups;
+            const normalized = `${Y}-${M}-${D}T${h || '00'}:${m || '00'}:${s || '00'}.${ms || '000'}${tz || 'Z'}`;
+            const date = new Date(normalized);
+
+            if (date.getTime() >= -62167219200000 && date.getTime() <= 253402300799999) {
+              return date;
+            }
+          }
+
+          throw new errors_1.MongoshInvalidInputError(`${JSON.stringify(input)} is not a valid ISODate`, errors_1.CommonErrors.InvalidArgument);
+        }"),
+    hours: 3,
+    student_name: 'Jarryd Marle',
+    tutor_name: 'Dani Lubbe',
+    lesson_type: 'face to face'
+  }
+]
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.logs.deleteOne({student_name: "Jarryd Marle"});
+{ acknowledged: true, deletedCount: 1 }
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.logs.find();
+[
+  {
+    _id: ObjectId("63848ae580696d7a196af3b7"),
+    date: Code("function ISODate(input) {
+          if (!input) input = new Date().toISOString();
+          const isoDateRegex = /^(?<Y>\d{4})-?(?<M>\d{2})-?(?<D>\d{2})([T ](?<h>\d{2})(:?(?<m>\d{2})(:?((?<s>\d{2})(\.(?<ms>\d+))?))?)?(?<tz>Z|([+-])(\d{2}):?(\d{2})?)?)?$/;
+          const match = input.match(isoDateRegex);
+
+          if (match !== null && match.groups !== undefined) {
+            const {
+              Y,
+              M,
+              D,
+              h,
+              m,
+              s,
+              ms,
+              tz
+            } = match.groups;
+            const normalized = `${Y}-${M}-${D}T${h || '00'}:${m || '00'}:${s || '00'}.${ms || '000'}${tz || 'Z'}`;
+            const date = new Date(normalized);
+
+            if (date.getTime() >= -62167219200000 && date.getTime() <= 253402300799999) {
+              return date;
+            }
+          }
+
+          throw new errors_1.MongoshInvalidInputError(`${JSON.stringify(input)} is not a valid ISODate`, errors_1.CommonErrors.InvalidArgument);
+        }"),
+    hours: 3,
+    student_name: 'Jarryd Marle',
+    tutor_name: 'Dani Lubbe',
+    lesson_type: 'face to face'
+  }
+]
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.logs.deleteOne({student_name: "Jarryd Marle"});
+{ acknowledged: true, deletedCount: 1 }
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.logs.insertOne({date: ISODate("2022-11-20T00:00:00Z") , hours: 3 , student_name: "Jarryd Marle" , tutor_name: "Dani Lubbe" , lesson_type: "face to face"});
+{
+  acknowledged: true,
+  insertedId: ObjectId("63848b8f80696d7a196af3b8")
+}
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.logs.find();
+[
+  {
+    _id: ObjectId("63848b8f80696d7a196af3b8"),
+    date: ISODate("2022-11-20T00:00:00.000Z"),
+    hours: 3,
+    student_name: 'Jarryd Marle',
+    tutor_name: 'Dani Lubbe',
+    lesson_type: 'face to face'
+  }
+]
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> show collections;
+logs
+users
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.find()\
+Uncaught:
+SyntaxError: Expecting Unicode escape sequence \uXXXX. (1:16)
+
+> 1 | db.users.find()\
+    |                 ^
+  2 |
+
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.find()\
+Uncaught:
+SyntaxError: Expecting Unicode escape sequence \uXXXX. (1:16)
+
+> 1 | db.users.find()\
+    |                 ^
+  2 |
+
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.find()
+[
+  {
+    _id: ObjectId("638486fb80696d7a196af3b5"),
+    name: 'Dani Lubbe',
+    ID: '123456789',
+    phone_no: '0614130436',
+    email: 'Danicatlubbe@icloud.com',
+    account_no: '987654321',
+    university: 'University of Cape Town',
+    course_name: "Bachelor's Degree in Geomatics",
+    date_of_birth: ISODate("2000-07-06T11:00:00.000Z"),
+    approved: true,
+    role: 'admin'
+  }
+]
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.insertOne({name: "Dani Lubbe" , ID: "123456789" , phone_no: "0614130436" ,email: "Danicatlubbe@icloud.com" , account_no: "987654321" , university: "University of Cape Town" , course_name: "Bachelor's Degree in Geomatics" , date_of_birth: ISODate("2000-07-06T00:00:00Z") , approved: true , r\
+Uncaught:
+SyntaxError: Expecting Unicode escape sequence \uXXXX. (1:300)
+
+> 1 | db.users.insertOne({name: "Dani Lubbe" , ID: "123456789" , phone_no: "0614130436" ,email: "Danicatlubbe@icloud.com" , account_no: "987654321" , university: "University of Cape Town" , course_name: "Bachelor's Degree in Geomatics" , date_of_birth: ISODate("2000-07-06T00:00:00Z") , approved: true , r\
+    |                                                                                                                                                                                                                                                                                                             ^
+  2 |
+
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.removeOne({name: 'Dani Lubbe'})
+TypeError: db.users.removeOne is not a function
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.remove({name: 'Dani Lubbe'});
+DeprecationWarning: Collection.remove() is deprecated. Use deleteOne, deleteMany, findOneAndDelete, or bulkWrite.
+{ acknowledged: true, deletedCount: 1 }
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.insertOne({name: "Dani Lubbe" , ID: "123456789" , phone_no: "0614130436" ,email: "Danicatlubbe@icloud.com" , account_no: "987654321" , unive
+...
+... );
+Uncaught:
+SyntaxError: Unexpected token, expected "," (3:0)
+
+  1 | db.users.insertOne({name: "Dani Lubbe" , ID: "123456789" , phone_no: "0614130436" ,email: "Danicatlubbe@icloud.com" , account_no: "987654321" , unive
+  2 |
+> 3 | );
+    | ^
+  4 |
+
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.insertOne({name: "Dani Lubbe" , ID: "123456789" , phone_no: "0614130436" ,email: "Danicatlubbe@icloud.com" , account_no: "987654321" , university: "University of Cape Town" , course_name: "Bachelor's Degree in Geomatics" , date_of_birth: ISODate("2000-07-06T00:00:00Z") , approved: true , role: "admin"});
+{
+  acknowledged: true,
+  insertedId: ObjectId("63848f4780696d7a196af3b9")
+}
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.insertOne({name: "Dani Lubbe" , ID: "123456789" , phone_no: "0614130436" ,email: "Danicatlubbe@icloud.com" , account_no: "987654321" , university: "University of Cape Town" , course_name: "Bachelor's Degree in Geomatics" , date_of_birth: ISODate("2000-07-06T00:00:00Z") , approved: true , role: "admin"});
+{
+  acknowledged: true,
+  insertedId: ObjectId("63848f4a80696d7a196af3ba")
+}
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.remove({name: 'Dani Lubbe'});
+{ acknowledged: true, deletedCount: 2 }
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.insertOne({name: "Dani Lubbe" , password: "airpops420" , ID: "123456789" , phone_no: "0614130436" ,email: "Danicatlubbe@icloud.com" , account_no: "987654321" , university: "University of Cape Town" , course_name: "Bachelor's Degree in Geomatics" , date_of_birth: ISODate("2000-07-06T00:00:00Z") , approved: true , role: "admin"});
+{
+  acknowledged: true,
+  insertedId: ObjectId("63848f7b80696d7a196af3bb")
+}
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.users.find()
+[
+  {
+    _id: ObjectId("63848f7b80696d7a196af3bb"),
+    name: 'Dani Lubbe',
+    password: 'airpops420',
+    ID: '123456789',
+    phone_no: '0614130436',
+    email: 'Danicatlubbe@icloud.com',
+    account_no: '987654321',
+    university: 'University of Cape Town',
+    course_name: "Bachelor's Degree in Geomatics",
+    date_of_birth: ISODate("2000-07-06T00:00:00.000Z"),
+    approved: true,
+    role: 'admin'
+  }
+]
+Atlas atlas-wno521-shard-0 [primary] LessonGeek> db.logs.find()
+[
+  {
+    _id: ObjectId("63848b8f80696d7a196af3b8"),
+    date: ISODate("2022-11-20T00:00:00.000Z"),
+    hours: 3,
+    student_name: 'Jarryd Marle',
+    tutor_name: 'Dani Lubbe',
+    lesson_type: 'face to face'
+  }
+]
+Atlas atlas-wno521-shard-0 [primary] LessonGeek>

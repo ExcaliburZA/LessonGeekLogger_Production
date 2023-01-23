@@ -1,0 +1,21 @@
+{
+  "name": "lessongeeklogger",
+  "version": "1.0.0",
+  "description": "dependencies package for Lesson Geek logger application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon lesson_geek_logger.js"
+  },
+  "author": "Samuel Dudley",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "1.20.1",
+    "express": "4.18.2",
+    "helmet": "6.0.0",
+    "jsonwebtoken": "8.5.1",
+    "moment": "2.29.4",
+    "mongoose": "6.7.3",
+    "nodemon": "2.0.20"
+  }
+}
