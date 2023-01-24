@@ -41,6 +41,7 @@ app.post('/log/:date/:hours/:student_name/:tutor_name/:lesson_type' , log_contro
 //retrieve likes for job endpoint
 //app.get('/job/:_id/likes' , job_controller.GetJob)
 
+//retrieve details for specific job endpoint
 app.get('/job/:_id' , job_controller.GetJob)
 
 app.get('/jobs' , job_controller.GetJobs)
