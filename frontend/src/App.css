@@ -1,0 +1,221 @@
+@keyframes body-color-shift{
+  0%  {background-color: whitesmoke;}
+  25% {background-color: #ff0066;}
+  50% {background-color: #66ccff;}
+  75% {background-color: #ffff99;}
+  100% {background-color: rgb(204, 255, 204);}
+}
+
+@keyframes login-border-color-shift{
+  0%  {border: 3px solid purple;}
+  25% {border: 3px solid #cc0000;}
+  50% {border: 3px solid #0066ff;}
+  75% {border: 3px solid #ffff00;}
+  100% {border: 3px solid #33cc33;}
+}
+
+
+
+.logBoxStyle:hover{
+  background-color: #ffcc99;
+  border-radius: 50px 15px 50px;
+}
+
+.logBoxStyle{
+  background-color: lightgrey;
+  text-align: center;
+  border-radius: 15px 50px 15px;
+  border: 3px solid black;
+  margin: auto;
+  padding: 12px;
+  font-size: 0.8rem;
+  max-width: 15%;
+  min-width: 150px;
+  margin-top: 20px;
+}
+
+.logDisplay{
+  padding: 10px;
+  background-color: lightgrey;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-align: center;
+  border-radius: 15px 50px 15px;
+  border: 3px solid black;
+}
+
+.logDisplayArea{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
+.registration{
+  border-radius: 50px 50px 50px;
+  background-color: white;
+  border: 3px solid #33cc33;
+  width: fit-content;
+  padding: 20px;
+  margin: auto;
+  margin-top: 15vh;
+}
+
+.registration:hover{
+  border: 3px solid darkorange;
+}
+
+.login:hover{
+  border: 3px solid darkorange;
+}
+
+.login{
+  border-radius: 50px 50px 50px;
+  background-color: white;
+  border: 3px solid #33cc33;
+  width: fit-content;
+  padding: 20px;
+  margin: auto;
+  margin-top: 30vh;
+  animation-name: login-border-color-shift;
+  animation-duration: 5s;
+}
+
+.logo{
+  content: url("./images/blacktextlogo.png");
+  width: 40vh;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 4vh;
+  margin-bottom: 4vh;
+}
+
+.logName{
+  font-style: italic;
+  font-size: 1rem;
+}
+
+.logHeading{
+  font-weight: bold;
+  font-size: 0.75rem;
+}
+
+.emptyLogsBox{
+  padding: 30px;
+  background-color: lightgrey;
+  font-family: 'sans-serif';
+  text-align: center;
+  border-radius: 15px 50px 15px;
+  border: 3px solid black;
+  font-size: 1.5rem;
+  max-width: 15%;
+  min-width: 300px;
+  margin-top: 10%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.lineStyle{
+  border: 1px solid orange;
+}
+
+.comment-div{
+  background-color: lightcyan;
+  padding: 5px;
+  margin: auto;
+  border: 1px solid green;
+  border-radius: 15px;
+  margin-bottom: 10px;
+}
+
+.comment-item{
+  list-style-type: none;
+}
+
+.comment-list-div{
+  align-items: center;
+  margin: auto;
+}
+
+.job-box{
+  background-color: lightgrey;
+  text-align: center;
+  border: 3px solid black;
+  margin: auto;
+  padding: 12px;
+  font-size: 0.8rem;
+  max-width: 15%;
+  min-width: 230px;
+  margin-top: 20px;
+}
+
+.comment-form{
+  background-color: lightcyan;
+  padding: 5px;
+  margin: auto;
+  border: 1px solid green;
+  border-radius: 15px;
+  margin-bottom: 10px;
+}
+
+#comment-input{
+  min-width: 15vh;
+  max-width: 20vh;
+  font-size: medium;
+}
+
+body{
+  background-color: rgb(204, 255, 204);
+  animation-name: body-color-shift;
+  animation-duration: 5s;
+}
+
+button{
+  font-size: x-large;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+  padding: 10px 25px 10px 25px;
+  margin: 10px;
+}
+
+select{
+  background-color: rgb(255, 204, 153);
+  border-radius: 2rem;
+  padding: 7px 15px 7px 15px;
+  margin-top: 5%;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: large;
+}
+
+button:hover{
+  color: white;
+  background-color: lightsalmon;
+  border: 1px solid lightsalmon;
+}
+
+input{
+  font-size: large;
+  margin: 1vh;
+  text-align: center;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+input:hover{
+  background-color: lightsalmon;
+  border: 2px solid lightsalmon;
+}
+
+.App {
+  text-align: center;
+}
+
+label{
+  text-align: center;
+}
+
