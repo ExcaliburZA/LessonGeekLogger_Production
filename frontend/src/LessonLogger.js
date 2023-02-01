@@ -255,37 +255,37 @@ export default class LessonLogger extends React.Component{
                 <select onChange={this.GetArea}>
                     <optgroup label="Western Cape">
                         {western_cape_areas.map(area => (
-                            <option>{area}</option>            
+                            <option key={"wc-"+area}>{area}</option>            
                         ))}
                     </optgroup>
                     <optgroup label="Eastern Cape">
                         {eastern_cape_areas.map(area => (
-                            <option>{area}</option>            
+                            <option key={"ec-"+area}>{area}</option>            
                         ))}
                     </optgroup>
                     <optgroup label="Gauteng">
                         {gauteng_areas.map(area => (
-                            <option>{area}</option>            
+                            <option key={"gt-"+area}>{area}</option>            
                         ))}
                     </optgroup>
                     <optgroup label="KwaZulu-Natal">
                         {kzn_areas.map(area => (
-                            <option>{area}</option>            
+                            <option key={"kzn-"+area}>{area}</option>            
                         ))}
                     </optgroup>
                     <optgroup label="Free State">
                         {free_state_areas.map(area => (
-                            <option>{area}</option>            
+                            <option key={"fs-"+area}>{area}</option>            
                         ))}
                     </optgroup>
                     <optgroup label="North West Province">
                         {north_west_province_areas.map(area => (
-                            <option>{area}</option>            
+                            <option key={"nwp-"+area}>{area}</option>            
                         ))}
                     </optgroup>
                     <optgroup label="Northern Cape">
                         {northern_cape_areas.map(area => (
-                            <option>{area}</option>            
+                            <option key={"nc-"+area}>{area}</option>            
                         ))}
                     </optgroup>
                     
@@ -490,7 +490,6 @@ export default class LessonLogger extends React.Component{
 
     async LogIn(){
         //make call to backend endpoint
-        //RESUME HERE TODAY: why are invalid login requests throwing an error here, but functioning correctly in Postman?
         let response = await fetch('/login/'+this.name+'/'+this.password , {
             method: "POST"
         });
@@ -542,48 +541,50 @@ export default class LessonLogger extends React.Component{
     //RESUME HERE TODAY
     //fix SyntaxError: Unexpected end of JSON input error
     async Register(){
-        let json_res;
-
-        let registrationResponse = await fetch('/register/'+this.name+'/'+this.password+'/'+this.ID+'/'+this.phoneNum+'/'+this.email+'/'+this.accountNum+'/'+this.university+'/'+this.courseName+'/'+this.dateOfBirth+'/'+this.area , 
+        fetch('/register/'+this.name+'/'+this.password+'/'+this.ID+'/'+this.phoneNum+'/'+this.email+'/'+this.accountNum+'/'+this.university+'/'+this.courseName+'/'+this.dateOfBirth+'/'+this.area , 
         {
             method: "POST"
         })
         .then((ret) => {
-            registrationResponse.json()
-            .then((json) => {
-                json_res = json;
+            ret.json()
+            .then(async(json) => {
+                if(json.token !== "NA"){ //if user was found and token was generated for them
+                    let token = json.token;
+                    let token_str = "Bearer "+token;
+        
+                    await fetch('/decode' , {
+                        method: "GET",
+                        headers: new Headers({
+                            Authorization: token_str
+                        })
+                    }).then((decode_res) => {
+                        decode_res.json()
+                        .then((json) => {
+                            let decoded_token = json.token; 
+
+                            if(decoded_token.name !== ""){
+                            alert(decoded_token.name +" registered and logged in!");
+            
+                            this.setState({
+                                name: decoded_token.name,
+                                token: token,
+                                role: decoded_token.role,                
+                            }, async() => {
+                                await this.GetLogs(token);
+                            })
+                        } else alert("Login failed! Could not decode token.")
+                        });                                    
+
+                    })
+        
+
+                } else alert("Registration failed!")
             })
-        });
+        })
 
         //gen token and save it to state to log the new user in
         
-        if(json_res.token !== "NA"){ //if user was found and token was generated for them
-            let token = json_res.token;
-            let token_str = "Bearer "+token;
 
-            let verificationResponse = await fetch('/decode' , {
-                method: "GET",
-                headers: new Headers({
-                    Authorization: token_str
-                })
-            }).then((ret) => {
-                verificationResponse.json()
-                .then((json) => {
-                    
-                })
-            });
-
-            
-            let decoded_token = json_res.token; 
-
-            alert(decoded_token.name +" logged in!");
-
-            this.setState({
-                name: decoded_token.name,
-                token: token,
-                role: decoded_token.role,                
-            })
-        }
     }
 
     async GetLogs(token){

@@ -43,7 +43,7 @@ exports.RegisterUser = async function(req, res) {
         })
     } else {
         console.log("Controller: "+newUser.name+" already exists!");
-        res.status(500).send({"token": "NA"});
+        res.status(200).send({"token": "NA"});
     }
 }
 
