@@ -1,0 +1,4 @@
+in /me endpoint 
+	grab JWT from authorization header
+	verify it
+	return data from verified token

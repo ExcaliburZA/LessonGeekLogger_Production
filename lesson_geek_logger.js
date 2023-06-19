@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const helmet = require('helmet');
 const jwt = require('jsonwebtoken')
-const PORT = 5000; //process.env.PORT || 5000;
+const PORT = 3000; //process.env.PORT || 5000;
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
@@ -10,16 +10,32 @@ const user_controller = require('./controllers/user.controller');
 const log_controller = require('./controllers/log.controller');
 const job_controller = require('./controllers/job.controller');
 
+const cors = require('cors')
+
 app.use(bodyParser.urlencoded( {extended: true} ));
 app.use(bodyParser.json());
 app.use(helmet());
+app.use(cors())
 mongoose.Promise = global.Promise;
 
+
+
 //login endpoint
-app.post('/login/:name/:password' , user_controller.LogIn)
+//app.post('/login/:name/:password' , user_controller.LogIn)
+
+app.post('/login', user_controller.LogIn)
+
+
+
+/*
+app.post('/login/:name/:password' , () => {
+    console.log("LOGIJNNNNN");
+})
+*/
 
 //registration endpoint
-app.post('/register/:name/:password/:ID/:phone_no/:email/:account_no/:university/:course_name/:date_of_birth/:area' , user_controller.RegisterUser)
+//app.post('/register/:name/:password/:ID/:phone_no/:email/:account_no/:university/:course_name/:date_of_birth/:area', cors() , user_controller.RegisterUser)
+app.post('/register', user_controller.RegisterUser);
 
 //fetch all users endpoint
 app.get('/users' , user_controller.GetAll)
@@ -36,7 +52,8 @@ app.get('/log/:_id' , log_controller.ViewLog)
 app.get('/logs/:name' , log_controller.ViewLogList)
 
 //add new log endpoint
-app.post('/log/:date/:hours/:student_name/:tutor_name/:lesson_type' , log_controller.AddLog)
+//app.post('/log/:date/:hours/:student_name/:tutor_name/:lesson_type' , log_controller.AddLog)
+app.post('/log/add' , log_controller.AddLog)
 
 //retrieve likes for job endpoint
 //app.get('/job/:_id/likes' , job_controller.GetJob)
@@ -47,10 +64,15 @@ app.get('/job/:_id' , job_controller.GetJob)
 app.get('/jobs' , job_controller.GetJobs)
 
 app.post('/job/:_id/like' , job_controller.AddLike)
+//app.post('/job/like/:_id' , job_controller.AddLike)
 
 app.post('/job/:_id/accept/:tutor_name' , job_controller.AcceptJob)
 
 app.post('/job/:_id/comment' , job_controller.AddComment)
+
+app.post('/job/delete/:_id', job_controller.DeleteJob)
+
+app.post('/job/add', job_controller.AddJob)
 
 //responded with decoded token on postman, issue somewhere else
 app.get('/decode' , (req, res) => {
@@ -92,12 +114,17 @@ mongoose.connection.once('open', function() {
     app.listen(PORT, () => console.log("Listening in on port ", PORT));
 })
 
+app.use(express.static('build'))
+
+/*
 if (process.env.NODE_ENV === 'production'){
     app.use(express.static(path.join(__dirname, 'frontend/build')));
     app.get('*',(req,res)=> {res.sendFile(path.resolve(__dirname,
     'frontend', 'build','index.html'));
     });
 }
+*/
+
 
 process.on('uncaughtException' , function(err) {
     console.log("Error: "+err);

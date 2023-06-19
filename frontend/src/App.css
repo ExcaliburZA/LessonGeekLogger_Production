@@ -14,17 +14,30 @@
   100% {border: 3px solid #33cc33;}
 }
 
+*{
+  font-family: 'Inter', sans-serif;
+}
 
+.lineStyle{
+  border: 1px solid orange;
+}
+
+table{
+  margin: auto;
+}
 
 .logBoxStyle:hover{
   background-color: #ffcc99;
-  border-radius: 50px 15px 50px;
+  color: white;
+  background-color: black;
+  border: 3px solid orange;
+  text-decoration: underline;
 }
 
 .logBoxStyle{
   background-color: lightgrey;
   text-align: center;
-  border-radius: 15px 50px 15px;
+  border-radius: 30px;
   border: 3px solid black;
   margin: auto;
   padding: 12px;
@@ -93,13 +106,13 @@
 }
 
 .logName{
-  font-style: italic;
-  font-size: 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
 .logHeading{
-  font-weight: bold;
-  font-size: 0.75rem;
+  font-size: 1rem;
+  font-style: italic;
 }
 
 .emptyLogsBox{
@@ -120,15 +133,11 @@
   font-style: italic;
 }
 
-.lineStyle{
-  border: 1px solid orange;
-}
-
 .comment-div{
   background-color: lightcyan;
   padding: 5px;
   margin: auto;
-  border: 1px solid green;
+  
   border-radius: 15px;
   margin-bottom: 10px;
 }
@@ -146,12 +155,17 @@
   background-color: lightgrey;
   text-align: center;
   border: 3px solid black;
+  border-radius: 25px;
   margin: auto;
   padding: 12px;
   font-size: 0.8rem;
   max-width: 15%;
   min-width: 230px;
   margin-top: 20px;
+}
+
+.new-job-input{
+  width: 85%;
 }
 
 .comment-form{
@@ -195,7 +209,6 @@ select{
 button:hover{
   color: white;
   background-color: lightsalmon;
-  border: 1px solid lightsalmon;
 }
 
 input{
@@ -217,5 +230,22 @@ input:hover{
 
 label{
   text-align: center;
+}
+
+table{
+  border-collapse: collapse;
+}
+
+th{
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+tr{
+  border: 3px solid black;
+}
+
+td{
+  padding: 6px;
 }
 

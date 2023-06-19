@@ -4,7 +4,11 @@ import TutorLog from "./TutorLog";
 
 import { Button } from "react-bootstrap";
 import JobBoard from "./components/JobBoard";
+import JobManager from "./components/JobManager";
 //import UserManager from "./components/UserManager";
+import {api} from "./api";
+import axios from "axios";
+import CryptoJS from "crypto-js";
 
 //class component
 export default class LessonLogger extends React.Component{
@@ -21,7 +25,7 @@ export default class LessonLogger extends React.Component{
     area = "Cape Town CBD";
 
     lessonStudent = "";
-    lessonDate = "";
+    lessonDate = new Date().toISOString();
     lessonDuration = "";
     lessonType = "face to face";
 
@@ -33,7 +37,7 @@ export default class LessonLogger extends React.Component{
     
     constructor(props){
         super(props);
-        this.state = {name: "" , token: "" , logs: null , role: "", registrationToggled: false , addLogToggle: false , manageUsersToggle: false, unapprovedUsersRetrieved: false , viewJobsToggle: false , jobs: [] , jobsRetrieved: false};
+        this.state = {name: "" , token: "" , logs: null , role: "", registrationToggled: false , addLogToggle: false , manageUsersToggle: false, unapprovedUsersRetrieved: false , viewJobsToggle: false , jobs: [] , jobsRetrieved: false, jobManagerToggle: false};
         this.registerToggle = false;
 
         //method binding
@@ -56,6 +60,8 @@ export default class LessonLogger extends React.Component{
         this.FormatDate = this.FormatDate.bind(this);
         //this.ViewUnapprovedUsers = this.ViewUnapprovedUsers.bind(this);
         this.ApproveUser = this.ApproveUser.bind(this);
+        this.Validate = this.Validate.bind(this);
+        //this.VerifyAge = this.VerifyAge.bind(this);
 
         this.GetStudName = this.GetStudName.bind(this);
         this.GetLessonDate = this.GetLessonDate.bind(this);
@@ -65,10 +71,18 @@ export default class LessonLogger extends React.Component{
         this.GetArea = this.GetArea.bind(this);
 
         this.GetUnapprovedUser = this.GetUnapprovedUser.bind(this);
+        this.Encrypt = this.Encrypt.bind(this);
+        this.ValidateLog = this.ValidateLog.bind(this);
     }
 
     componentDidMount(){
         console.log("Component mounted");
+    }
+
+    //RESUME HERE: stop this from returnign to logs page, return to jobs page instead
+    async RefreshJobs(){
+        await this.ViewJobs();
+        this.setState({jobManagerToggle: false} , console.log("Job manager toggled: "+this.state.jobManagerToggle));
     }
 
     render(){
@@ -89,7 +103,8 @@ export default class LessonLogger extends React.Component{
                     </div>
                     
                 )
-            } else if(typeof(this.state.logs) == "string"){
+            } else if(this.state.logs.message === "No logs found"){ //else if no logs were found and "none" was assigned to this.state.logs by GetLogs()
+                console.log("Render method says: no logs found for "+this.state.name);
                 return(
                     <div>
                         <div className="emptyLogsBox">No logs found for {this.state.name}</div><br/>
@@ -102,26 +117,47 @@ export default class LessonLogger extends React.Component{
                 return(
                     <div>
                         <this.UserManager /><br/>
-                        <Button variant="primary" onClick={async() => await this.ApproveUser()}>Approve {this.unapprovedTutorName}</Button> 
+                        <Button variant="primary" onClick={async() => await this.ApproveUser()}>Approve</Button> 
                         <Button variant="primary" onClick={async() => await this.ToggleUserManager()}>Return</Button> 
                     </div>
                 )
             } else if(this.state.viewJobsToggle){
-                let parsedJobs = Array.from(this.state.jobs);               
-                return(                   
-                    <div>
-                        {parsedJobs.map(job => (
-                            <JobBoard key={job.grade+"-"+job.student_name+"-"+job.subject} job={job} tutor_name={this.state.name}/>
-                        ))}<br/><br/>
-                        <Button variant="secondary" onClick={() => this.ViewJobs()}>Return</Button>
-                    </div>
-                )
+                let parsedJobs = Array.from(this.state.jobs);  
+                //console.log("Attempting to display jobs: "+parsedJobs);    
+                if(this.state.jobManagerToggle){ //if job manager has been toggled on... show job management screen and button to return to job viewer
+                    return(                   
+                        <div>
+                            {/*parsedJobs.map(job => (
+                                <JobBoard key={job.grade+"-"+job.student_name+"-"+job.subject} job={job} tutor_name={this.state.name}/>
+                            ))*/}<br/><br/>
+                            {/*<Button variant="secondary" onClick={() => this.ViewJobs()}>Return</Button>*/}
+                            {isAdmin ? <JobManager jobs={parsedJobs}></JobManager> : <h1 className="emptyLogsBox">{this.state.name} does not have access to this feature</h1>}<br/>
+                            <Button id="btnBackToJobs" onClick={async() => {
+                                //this.setState({jobManagerToggle: false} , console.log("Job manager toggled: "+this.state.jobManagerToggle));
+                                await this.RefreshJobs();
+                            }}>Back to jobs page</Button>  
+                        </div>
+                    )
+                } else {
+                    return(                   
+                        <div>
+                            {parsedJobs.map(job => (
+                                <JobBoard key={job.grade+"-"+job.student_name+"-"+job.subject} job={job} tutor_name={this.state.name}/>
+                            ))}<br/><br/>
+                            <Button variant="secondary" onClick={() => this.ViewJobs()}>Return</Button>
+                            <Button id="btnBackToJobs" onClick={() => {
+                                this.setState({jobManagerToggle: true} , console.log("Job manager toggled: "+this.state.jobManagerToggle));
+                            }}>Edit jobs</Button>                            
+                        </div>
+                    )
+                }         
+
 
             } else {
-                console.log("Logs for ",this.state.name+" found! Logs: "+JSON.stringify(this.state.logs.logs));
-                console.log("Retrieved logs index 0: ",this.state.logs.logs[0]);
-                console.log("Retrieved logs count: ",this.state.logs.logs.length);
-                console.log("Type of state.logs.logs: ",typeof(this.state.logs.logs));
+                console.log("Logs for ",this.state.name+" found! Logs: "+JSON.stringify(this.state.logs));
+                console.log("Retrieved logs index 0: ",this.state.logs[0]);
+                console.log("Retrieved logs count: ",this.state.logs.length);
+                console.log("Type of state.logs.logs: ",typeof(this.state.logs));
                 let parsedLogs = Array.from(this.state.logs.logs);
                 console.log("Array elements: "+parsedLogs.length+"\nElement 0: "+parsedLogs[0].tutor_name); //DISPLAYS CORRECT INFORMATION -> array has parsed successfully!                           
 
@@ -166,8 +202,8 @@ export default class LessonLogger extends React.Component{
         return(
             <div className="login">
                 <img className="logo"/><br/>
-                <input onChange={this.GetName} placeholder="Name" value="Dani Lubb"/><br/>
-                <input onChange={this.GetPassword} placeholder="Password" value="airpops42"/><br/><br/>
+                <input onChange={this.GetName} placeholder="Name" /><br/>
+                <input onChange={this.GetPassword} placeholder="Password" /><br/><br/>
 
                 <button onClick={this.LogIn}>Log in</button>
                 <button onClick={this.ToggleRegistration}>I am a new user</button>
@@ -239,17 +275,18 @@ export default class LessonLogger extends React.Component{
             "Kimberly"
         ]
 
+        //RESUME HERE TODAY: why does registration work only when a value is hard coded?
         return(
             <div className="registration">
                 <img className="logo"/><br/>
-                <input onChange={this.GetName} placeholder="Name"/><br/>
-                <input onChange={this.GetPassword}placeholder="Password"/><br/>
-                <input onChange={this.GetID} placeholder="ID number"/><br/>
-                <input onChange={this.GetPhone} placeholder="Mobile number"/><br/>
-                <input onChange={this.GetEmail} placeholder="Email"/><br/>
-                <input onChange={this.GetAccountNum} placeholder="Bank account number"/><br/>
-                <input onChange={this.GetUniversity} placeholder="University"/><br/>
-                <input onChange={this.GetCourseName} placeholder="Course name"/><br/>
+                <input onChange={this.GetName} placeholder="Name" /><br/>
+                <input onChange={this.GetPassword}placeholder="Password" /><br/>
+                <input onChange={this.GetID} placeholder="ID number" /><br/>
+                <input onChange={this.GetPhone} placeholder="Mobile number"  /><br/>
+                <input onChange={this.GetEmail} placeholder="Email" id="inEmail" /><br/> {/*type="email"*/}
+                <input onChange={this.GetAccountNum} placeholder="Bank account number" /><br/>
+                <input onChange={this.GetUniversity} placeholder="University" /><br/>
+                <input onChange={this.GetCourseName} placeholder="Course name" /><br/>
                 <label>Date of birth</label><br/>
                 <input type="date" onChange={this.GetDateOfBirth}/><br/><br/>
                 <select onChange={this.GetArea}>
@@ -291,7 +328,7 @@ export default class LessonLogger extends React.Component{
                     
                 </select><br/><br/>
 
-                <button onClick={this.Register}>Register</button>
+                <button onClick={() => this.Register()}>Register</button>
                 <button onClick={this.ToggleRegistration}>Back to login</button>
             </div>
         )
@@ -301,17 +338,21 @@ export default class LessonLogger extends React.Component{
         return(
             <div className="newLogBox">
                 <input onChange={this.GetStudName} placeholder="Student name"/><br/>
-                <label for="inHours">(indicate partial hours with a '.' eg: 150 mins = 2.5 hours)</label><br/>
+                <label htmlFor="inHours">(indicate partial hours with a '.' eg: 150 mins = 2.5 hours)</label><br/>
                 <input id="inHours" onChange={this.GetHours} placeholder="Hours"/><br/>
                 <select onChange={this.GetType}>
                     <option>face to face</option>
                     <option>online</option>
                 </select><br/><br/>
-                <input type="date" onChange={this.GetLessonDate}/><br/><br/>
+                <input id="lessonDate" type="date" onChange={this.GetLessonDate}/><br/><br/>
                 <Button variant="primary" onClick={() => this.SubmitLog()}>Submit log</Button>
 
             </div>
         )
+    }
+
+    SetDefaultDate(){
+
     }
 
     UserManager(){
@@ -334,16 +375,12 @@ export default class LessonLogger extends React.Component{
 
     async ViewJobs(){  
         if(!this.state.viewJobsToggle){ //if user not currently on job viewer... fetch jobs and show it to them using viewJobsToggle as true
-            fetch('/jobs' , {
-                method: "GET",
-            })
+            api.get('/jobs', {})
             .then((res) => {
-                res.json()
-                .then((val) => {
-                    console.log("ViewJobs() retrieved: ", val.jobs);
-                     this.setState({jobs: val.jobs , jobsRetrieved: true , viewJobsToggle: true}) //save jobs to state and update state to indicate that jobs have been retrieved
-                })
-            }) 
+                console.log("ViewJobs() retrieved: ", res.data.jobs);
+                this.setState({jobs: res.data.jobs , jobsRetrieved: true , viewJobsToggle: true})
+            })
+
         } else { //else if user is on job viewer... go back to the job viewer using viewJobsToggle as false
             this.setState({viewJobsToggle: false});
         }
@@ -353,35 +390,83 @@ export default class LessonLogger extends React.Component{
 
     async SubmitLog(){
         let date = new Date(this.lessonDate).toISOString();
-        
-        let response = await fetch('/log/'+date+'/'+this.lessonDuration+'/'+this.lessonStudent+'/'+this.state.name+'/'+this.lessonType , {
-            method: "POST",
-        })
+        console.log(date);
 
-        let json = await response.json();
-        console.log("Result: ",json.result);
+        let validationRes = await this.ValidateLog();
+        //console.log("VALIDATION RES: "+validationRes);
 
-        //let logs = new Array(this.state.logs);
-        //logs.push(json.result);
-        this.setState({addLogToggle: false});
-        await this.GetLogs();
-        //this.setState({logs: logs , addLogToggle: false})
-        
+        if(validationRes[1].length <= 1){
+            await axios.post('/log/add',{},{
+                headers: {
+                    'lesson_date': date,
+                    'hours': this.lessonDuration,
+                    'student_name': this.lessonStudent,
+                    'tutor_name': this.state.name,
+                    'lesson_type': this.lessonType
+                }
+            })
+            .then((res) => {
+                //console.log("SubmitLog() result: "+JSON.stringify(res.data.result));
+                //console.log("_id: "+res.data.result._id);     WORKS
+
+                let logs = new Array(this.state.logs);
+                logs.push(res.data.result);
+                            
+                //this.setState({addLogToggle: false , logs: logs});
+                this.setState({addLogToggle: false});
+            })
+            .then(async() => {
+                await this.GetLogs();
+            })
+        } else {
+            alert("Invalid input provided!\n\n"+validationRes[1]);
+        }
+        //api.post('/log/'+date+'/'+this.lessonDuration+'/'+this.lessonStudent+'/'+this.state.name+'/'+this.lessonType, {})
+
+   
+    }
+
+    async ValidateLog(){
+        let validated = true;
+        let outputMsg = "";
+        const MIN_LESSON_DURATION = 0.1;
+        const INVALID_INPUT_MESSAGES = ["Lesson duration must be at least 0.1 hours long and must contain only numbers and periods\n\n",
+        "Student name must contain only letters and be at least 2 letters long\n\n"];
+
+        let nameRegex = new RegExp(/^[a-zA-Z]{2,}$/);
+        let durationRegex = new RegExp(/^[0-9.]/);
+
+        if((this.lessonDuration < MIN_LESSON_DURATION) || (!durationRegex.test(this.lessonDuration))) {
+            validated = false;
+            outputMsg += INVALID_INPUT_MESSAGES[0];
+        } 
+        if(!nameRegex.test(this.lessonStudent)) {
+            validated = false;
+            outputMsg += INVALID_INPUT_MESSAGES[1];
+        }
+
+        return [validated, outputMsg];
+
     }
 
     //WORKING
     async ViewUnapprovedUsers(){
-        await fetch('/users/unapproved', {
-            method: "GET"
-        }).then((res) => res.json())
+        await api.get('/users/unapproved', {})
         .then((res) => {
-            if(res.message !== "no pending approvals"){
-                this.unapprovedUsers = res.users;
-                this.pendingUserCount = this.unapprovedUsers.length;
-                console.log("Users awaiting approval: ", this.unapprovedUsers.length);    //shows correctly
+            //console.log("UNAPPROVED\n");
+            //console.log(res.data.result.length);
+            
+            
+            if(res.data.result.length > 0){
+                //alert(res.data.result.length);        displays correctly
+                this.unapprovedUsers = Array.from(res.data.result);
+                //this.pendingUserCount = Array.from(this.unapprovedUsers).length;
+                //alert("Users awaiting approval: ", Array.from(res.data.result).length);    //shows correctly
+                console.log("UNAPPROVED USERS:"+this.unapprovedUsers.length);
             } else {
-                console.log("No users awaiting approval at this time");
+                alert("No users awaiting approval at this time");
             }
+            
        
         })
     }
@@ -390,22 +475,21 @@ export default class LessonLogger extends React.Component{
                     //if unapproved users havent been fetched
         await this.ViewUnapprovedUsers();  //wait for them to be fetched and assigned to class attributes       
 
-        if(this.pendingUserCount > 0){ //if user is on the user manager page and there are users awaiting approval
+        if(this.unapprovedUsers.length > 0){ //if user is on the user manager page and there are users awaiting approval
             this.setState({manageUsersToggle: !this.state.manageUsersToggle , unapprovedUsersRetrieved: true})
         } else {
-            alert("No users awaiting approval at this time");
+            //alert("No users awaiting approval at this time");
             this.setState({unapprovedUsersRetrieved: true})
         }
         
     }
 
     async ApproveUser(){
-        await fetch('/approve/'+this.unapprovedTutorName ,{
-            method: "POST"
-        }).then((result) => {
-            console.log("User approval response:\n", result);
-            this.setState({manageUsersToggle: false}, () => console.log("Returning to log viewer..."));
-        })
+       await api.post('/approve/'+this.unapprovedTutorName, {})
+       .then((res) => {
+        console.log("User approval response:\n", res.data);
+        this.unapprovedTutorName = "";
+       })
     }
 
     GetStudName = (event) => {
@@ -440,42 +524,42 @@ export default class LessonLogger extends React.Component{
 
     GetName = (event) => {
         this.name = event.target.value;
-        console.log("Name: "+this.name);
+        console.log("Name: "+this.name.trim());
     }
 
     GetPassword = (event) => {
         this.password = event.target.value;
-        console.log("Password: "+this.password);
+        console.log("Password: "+this.password.trim());
     }
 
     GetID = (event) => {
         this.ID = event.target.value;
-        console.log("ID number: "+this.ID);
+        console.log("ID number: "+this.ID.trim());
     }
 
     GetPhone = (event) => {
-        this.phoneNum = event.target.value;
-        console.log("Mobile number: "+this.phoneNum);
+        this.phoneNum = String(event.target.value).replace(/ /g, '');
+        console.log("Mobile number: "+this.phoneNum.trim());
     }
 
     GetEmail = (event) => {
         this.email = event.target.value;
-        console.log("Email: "+this.email);
+        console.log("Email: "+this.email.trim());
     }
 
     GetAccountNum = (event) => {
         this.accountNum = event.target.value;
-        console.log("Bank account number: "+this.accountNum);
+        console.log("Bank account number: "+this.accountNum.trim());
     }
 
     GetUniversity = (event) => {
         this.university = event.target.value;
-        console.log("University: "+this.university);
+        console.log("University: "+this.university.trim());
     }
 
     GetCourseName = (event) => {
         this.courseName = event.target.value;
-        console.log("Course name: "+this.courseName);
+        console.log("Course name: "+this.courseName.trim());
     }
 
     GetDateOfBirth = (event) => {
@@ -489,157 +573,209 @@ export default class LessonLogger extends React.Component{
     }
 
     async LogIn(){
+
         //make call to backend endpoint
-        let response = await fetch('/login/'+this.name+'/'+this.password , {
-            method: "POST"
-        });
 
-        //parse response from backend call as JSON
-        let json = await response.json();
+        //let response = await api.post('/login/'+this.name+'/'+this.password, {});
+        
+        let secret = "LUBBEDANI2000";
+        let encrypted = CryptoJS.AES.encrypt(this.password, secret).toString();
+        //let response = await axios.post('http://localhost:3000/login', {}, {
+        let response = await axios.post('/login', {}, {
+            headers:{
+            'name': this.name,
+            'password': encrypted
+            }
+        })
 
-        if(json.token !== "NA"){ //if user was found and token was generated for them...
+        let json = response.data;
+        console.log(json.token);
+        //console.log(response);
+
+        
+        if(json.token != "NA"){ //if user was found and token was generated for them...
+        //if("error_msg" in json){  
             let token = json.token;
             let token_str = "Bearer "+token;
-
-            //making a call to the backend token verification endpoint
-            let verificationResponse = await fetch('/decode' , {
-                method: "GET",
-                headers: new Headers({
+            //alert("token string:\n"+token_str); //shows correct info         
+            
+            //let verificationResponse = await api.get('/decode' , {
+            let verificationResponse = await axios.get('/decode' , {
+                headers: {
                     authorization: token_str
-                })
-            });
-
-            //parsing backend response as JSON and retrieving the decoded user token from it
-            json = await verificationResponse.json();
-            let decoded_token = json.token; 
-
-            if(decoded_token.name !== ""){ //if token verified and decoded...
-                alert(decoded_token.name +" logged in!");
+                }
+            })
+            
+            //console.log(verificationResponse.data.token.name);
+            
+            if(verificationResponse.data.token.name !== ""){ //if token verified and decoded...
+                alert(verificationResponse.data.token.name +" logged in!");
 
                 //fetch logs for logged in user here               
     
                 //save logged in user's information and generated token to state. Forces page to re-render and show new display now that name has been saved to state
                 this.setState({
-                    name: decoded_token.name,
-                    token: token,
-                    role: decoded_token.role,                
+                    name: verificationResponse.data.token.name,
+                    token: json.token,
+                    role: verificationResponse.data.token.role,                
                 } , async() => {
-                    await this.GetLogs(token);
+                    alert("state.name: "+this.state.name+"\nstate.token: "+this.state.token+"\nstate.role: "+this.state.role)
+                    
+                    await this.GetLogs(this.state.token);
                 })
 
             } else {
                 alert("Login failed! Could not decode token.");
             }
+            
          
         }
         else {
             alert("Login failed! Please check the submitted name and password.");
         }
         
+        
     }
     
-    //RESUME HERE TODAY
-    //fix SyntaxError: Unexpected end of JSON input error
     async Register(){
-        fetch('/register/'+this.name+'/'+this.password+'/'+this.ID+'/'+this.phoneNum+'/'+this.email+'/'+this.accountNum+'/'+this.university+'/'+this.courseName+'/'+this.dateOfBirth+'/'+this.area , 
-        {
-            method: "POST"
-        })
-        .then((ret) => {
-            ret.json()
-            .then(async(json) => {
-                if(json.token !== "NA"){ //if user was found and token was generated for them
-                    let token = json.token;
-                    let token_str = "Bearer "+token;
         
-                    await fetch('/decode' , {
-                        method: "GET",
-                        headers: new Headers({
-                            Authorization: token_str
+        if(this.Validate()){
+            console.log("Accepted!");
+
+            let encryptedAccNum = "";
+
+            await this.Encrypt(this.accountNum).then((res) => {
+                encryptedAccNum = res;
+                console.log("ENCRYPTED ACC NUM: "+res);
+                    this.Encrypt(this.password).then((res) => {
+                        console.log("ENCRYPTED PASSWORD: "+res);
+                        axios.post('/register', {}, {    
+                            headers: {
+                                //'Access-Control-Allow-Origin' : "http://localhost:8000"
+                                'name' : this.name,
+                                'password' : (res),
+                                'ID' : this.ID,
+                                'phone_no': this.phoneNum,
+                                'email': this.email,
+                                'account_no': encryptedAccNum,
+                                'university': this.university,
+                                'course_name': this.courseName,
+                                'date_of_birth': this.dateOfBirth,
+                                'role': 'tutor',
+                                'area': this.area 
+                
+                            }
                         })
-                    }).then((decode_res) => {
-                        decode_res.json()
-                        .then((json) => {
-                            let decoded_token = json.token; 
-
-                            if(decoded_token.name !== ""){
-                            alert(decoded_token.name +" registered and logged in!");
-            
-                            this.setState({
-                                name: decoded_token.name,
-                                token: token,
-                                role: decoded_token.role,                
-                            }, async() => {
-                                await this.GetLogs(token);
-                            })
-                        } else alert("Login failed! Could not decode token.")
-                        });                                    
-
+                        .then((res) => {
+                            console.log(res);
+                        })
                     })
-        
-
-                } else alert("Registration failed!")
             })
-        })
 
-        //gen token and save it to state to log the new user in
-        
+            //api.get('http://localhost:3000/logs/Dani%20Lubbe', {})
+           
+        } //else alert("Invalid form data entered!")        
 
+        //await axios.post('http://localhost:3000/register/'+this.name+'/'+this.password+'/'+this.ID+'/'+this.phoneNum+'/'+this.email+'/'+this.accountNum+'/'+this.university+'/'+this.courseName+'/'+this.dateOfBirth+'/'+this.area, {}, {
+       
     }
 
-    async GetLogs(token){
-         //first decode token from state, verify and decode and check for name
-         let token_str = "Bearer "+token;        
+    async Encrypt(plaintext){
+        const SECRET_KEY = "LUBBEDANI2000";
+        let encrypted = CryptoJS.AES.encrypt(plaintext, SECRET_KEY);
 
-         let token_decode_response = await fetch('/decode', {
-            method: "GET",
-            headers: new Headers({
-                Authorization: token_str
-            })
-         })
+        return encrypted.toString();
+    }
 
-         let json = await token_decode_response.json();
-         
-         if(json.name !== ""){ //if token was verified and decoded correctly 
-            
-            let response = await fetch('/logs/'+this.state.name , {
-                method: "GET"         
-            });
-
-            //parsing backend response as JSON and echoing the result to console
-            await response.json()
-            .then((value) => {
-                //console.log("Logs parsed from json: ",value.logs.length);
-                json = value;
-            });
-
-            //let testLog = {"logs":[{"_id":"test","date":"Sun Nov 20 2022 02:00:00 GMT+0200 (South Africa Standard Time)","hours":4,"student_name":"sgf","tutor_name":"Dani adddaLubbe","lesson_type":"faceOtoface"}]};
-            
-            if(json.message === "No logs found"){
-                this.setState({
-                    logs: "none"
-                })   
-            } else {
-                    this.setState({
-                    logs: json
-                }, () => {
-                    //console.log("State logs saved: ",JSON.stringify(this.state.logs));     
-                    //this.render();
-                }) 
-            }
-
-            //saving the retreived logs to component state
     
-            
-            /* CALLS BEFORE RENDER METHOD MESSAGE IS DISPLAYED
-            this.setState({role: "test"} , 
-                console.log("role: ",this.state.role)
-            )
-            */
+    Validate(){
+        let validated = true;
+        const ID_LENGTH = 13;
+        const PHONE_LENGTH = 10;
 
-         } else {
-            alert("JWT token verification failed!\nMethod: GetLogs(token)");
-         }     
+        /* REGEX PATTERN REFERENCED FROM
+        https://www.youtube.com/watch?v=QxjAOSUQjP0 */
+        const EMAIL_REGEX = new RegExp(/^([a-z\d\.-]+)@([a-z\d-]+)\.([a-z]{2,15})(\.[a-z]{2,8})?$/);
+
+        const INVALID_INPUT_MESSAGES = ["ID number must be 13 digits long\n\n", 
+        "Mobile number must be 10 digits long\n\n", 
+        "Email address must contain a name consisting of alphanumeric characters, an '@' symbol, a domain of between 2 and 15 alphanumeric characters, and an extension of between 2 and 8 alphanumeric characters\nEg; myname@testdomain.com\n\n"];
+
+        let outputMsg = ""; 
+
+        if(this.ID.length !== ID_LENGTH){
+            outputMsg += INVALID_INPUT_MESSAGES[0];
+            console.log("Invalid ID");
+            validated = false;
+        }
+        if(!EMAIL_REGEX.test(this.email)){
+            outputMsg += INVALID_INPUT_MESSAGES[2];
+            console.log("Invalid email");
+            validated = false;
+        }
+        if(this.phoneNum.length !== PHONE_LENGTH){
+            outputMsg += INVALID_INPUT_MESSAGES[1];
+            console.log("Invalid mobile number");
+            validated = false;
+        }
+
+        if(!validated) alert("Invalid information provided!\n\n"+outputMsg);
+        //this.VerifyAge();
+
+        return validated;
+    }
+
+    /*
+    VerifyAge(){
+        let verified = true;
+        let today = new Date();
+        //console.log(this.dateOfBirth);
+        let birthday = String(this.dateOfBirth).replace(/-/g, ''); //.replace(/ /g, '')
+        console.log(birthday);
+
+        birthday = "20230405";
+        const BIRTH_YEAR = birthday.substring(0, 4);
+        const BIRTH_MONTH = birthday.substring(5, 2); //WHY WILL THIS NOT WORK???
+        const BIRTH_DAY = birthday.substring(7);
+
+        console.log("YEAR: "+BIRTH_YEAR+"\nMONTH: "+BIRTH_MONTH+"\nDAY: "+BIRTH_DAY);       
+
+        return verified;
+    }
+    */
+    
+
+    async GetLogs(){
+         //first decode token from state, verify and decode and check for name
+         let token_str = "Bearer "+this.state.token;        
+
+         //let token = await token_decode_response.json();
+         //let decoded_token = verificationResponse.data.token;
+         //alert(verificationResponse.data);
+
+         let logsResponse = await axios.get('/logs/'+this.state.name , {
+            headers: {
+                authorization: token_str
+            }
+        })
+
+        
+        if("message" in logsResponse) console.log("LOGS RESPONSE: \n"+logsResponse.data.logs[0].date);
+        else  console.log("LOGS RESPONSE: \n"+logsResponse.data.message); 
+        //console.log("LOGS RESPONSE: \n"+logsResponse.data.logs[0].date);       Shows correct info
+        //console.log("LOGS RESPONSE: \n"+logsResponse.data.message);       shows corrrect message when logs not found   
+
+        //let testLog = {"logs":[{"_id":"test","date":"Sun Nov 20 2022 02:00:00 GMT+0200 (South Africa Standard Time)","hours":4,"student_name":"sgf","tutor_name":"Dani adddaLubbe","lesson_type":"faceOtoface"}]};
+        
+        if(logsResponse.message === "No logs found"){
+            this.setState({
+                logs: 1
+            })   
+        } else {
+                this.setState({
+                logs: logsResponse.data
+            }) 
+        }                   
 
     }
 

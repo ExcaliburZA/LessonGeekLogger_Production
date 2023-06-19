@@ -25,6 +25,19 @@ export default function TutorLog(props) {
     }
     */
   
+    /*
+        return(
+            <div className="container">                
+                <div className="card">
+                    <div className="card-body">
+                        <h2 className="card-title">Drive 2011</h2>
+                        <p>Driver is a skilled hollywood stuntman who moonlights as a getaway driver</p>
+                    </div>
+                </div>
+            </div>
+        );
+        */
+
         return(
             <div className="logBoxStyle">                
                 <h2 className="logHeading">Tutor name: <p className="logName">{tutor_name}</p></h2><hr className="lineStyle"></hr>

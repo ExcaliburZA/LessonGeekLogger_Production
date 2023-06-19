@@ -1,38 +1,57 @@
 const Users = require('../frontend/src/models/user_model');
 const jwt = require('jsonwebtoken');
 const e = require('express');
+const cryptojs = require('crypto-js');
+
 
 exports.LogIn = async function(req, res) {
-    Users.find({name: {$eq: req.params.name} , password: {$eq: req.params.password}})
+    //console.log("Controller LOGIN called");
+
+    let secret = "LUBBEDANI2000";
+    let password = cryptojs.AES.decrypt(req.headers['password'], secret);
+    password = password.toString(cryptojs.enc.Utf8);
+    //console.log(password);
+    
+    Users.find({name: {$eq: req.headers['name']} , password: {$eq: password}})
     .then((ret) => {
+        //ret.length > 0 ? console.log(true) : console.log(false); shows correctly
+        //console.log(ret[0]);
+        
+        //if(ret.length > 0){ //if found...
+        
+        //fails whenever it hits the else
         if(ret.length > 0){ //if found...
             let token = GenToken(ret[0].name , ret[0].password, ret[0].approved, ret[0].role);
-            console.log("User controller says: "+req.params.name+" logged in!");
-            res.status(200).send({"token": token})
+            console.log("User controller says: "+req.params.name+" logged in!\nToken: "+token);           
+            res.status(200).send({"token": token}) 
         } else {
             console.log("User controller says: Login failed");
-            res.status(500).send({"token": "NA"});      //sends correctly
+            res.status(200).send({"token": "NA"});      
         };
+        
+        
 
     })  
+    
 }
 
 exports.RegisterUser = async function(req, res) {
     let newUser = {
-        name : req.params.name,
-        password: req.params.password,
-        ID: req.params.ID,
-        phone_no: req.params.phone_no,
-        email: req.params.email,
-        account_no: req.params.account_no,
-        university: req.params.university,
-        course_name: req.params.course_name,
-        date_of_birth: req.params.date_of_birth,
-        approved: req.params.approved,
+        name: req.headers['name'], 
+        password: req.headers['password'],
+        ID: req.headers['id'],
+        phone_no: req.headers['phone_no'],
+        email: req.headers['email'],
+        account_no: req.headers['account_no'],
+        university: req.headers['university'],
+        course_name: req.headers['course_name'],
+        date_of_birth: req.headers['date_of_birth'],
+        approved: false,
         role: 'tutor',
-        area: req.params.area
-    };
+        area: req.headers['area']
+    }
 
+    
     let userExists = await Users.findOne( {name: {$eq: newUser.name}} );
     if(!userExists) {
         Users.create(newUser)
@@ -44,7 +63,9 @@ exports.RegisterUser = async function(req, res) {
     } else {
         console.log("Controller: "+newUser.name+" already exists!");
         res.status(200).send({"token": "NA"});
+        //res.status(200).send({"error_msg": "username already exists"});
     }
+    
 }
 
 function GenToken(name, password, approved, role){
@@ -61,16 +82,10 @@ function GenToken(name, password, approved, role){
 
 exports.GetUnapprovedUsers = async function(req, res){
     Users.find({approved: {$eq : false}})
-    .then((result) => {       
-        if(result.length > 0)
-        {
-            //console.log("Unapproved users retrieved:\n", result);
-            res.status(200).send({message: "Unapproved users retrieved" , users: result});
-        } 
-        else{
-            console.log("No users awaiting approval at this time")
-            res.status(200).send({message: "no pending approvals"})     
-        } 
+    .then((result) => {    
+        //console.log(result[0]);
+        res.send({result});          
+        
     })
 }
 

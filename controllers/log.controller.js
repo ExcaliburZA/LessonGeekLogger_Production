@@ -2,6 +2,7 @@ const Logs = require('../frontend/src/models/log_model');
 //const jwt = require('jsonwebtoken');
 
 exports.AddLog = async function(req, res){
+    /*
     let log = {
         date: req.params.date,
         hours: req.params.hours,
@@ -9,6 +10,22 @@ exports.AddLog = async function(req, res){
         tutor_name: req.params.tutor_name,
         lesson_type: req.params.lesson_type
     }
+
+    Logs.create(log)
+    .then(result => {
+        console.log("Log added!\nResult: "+result);
+        res.status(200).send({result: result});
+    })
+    */
+
+    let log = {
+        date: req.headers['lesson_date'],
+        hours: req.headers['hours'],
+        student_name: req.headers['student_name'],
+        tutor_name: req.headers['tutor_name'],
+        lesson_type: req.headers['lesson_type']
+    }
+ 
 
     Logs.create(log)
     .then(result => {

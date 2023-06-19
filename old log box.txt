@@ -1,0 +1,7 @@
+            <div className="logBoxStyle">                
+                <h2 className="logHeading">Tutor name: <p className="logName">{tutor_name}</p></h2><hr className="lineStyle"></hr>
+                <h2 className="logHeading">Student name:<p className="logName">{student_name}</p></h2><hr className="lineStyle"></hr>
+                <h2 className="logHeading">Hours: <p className="logName">{hours}</p></h2><hr className="lineStyle"></hr>
+                <h2 className="logHeading">Lesson type: <p className="logName">{lesson_type}</p></h2><hr className="lineStyle"></hr>
+                <h2 className="logHeading">Date: <p className="logName">{date}</p></h2>
+            </div>

@@ -21,11 +21,6 @@ let JobSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    accepted: {
-        type: Boolean,
-        required: true,
-        default: false
-    },
     likes:{
         type: Number,
         required: true,
@@ -33,7 +28,8 @@ let JobSchema = mongoose.Schema({
     },
     tutor_name: {
         type: String,
-        required: false
+        required: false,
+        default: ""
     },
     comments: {
         type: Array,

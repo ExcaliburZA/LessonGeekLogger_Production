@@ -1,6 +1,8 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import '../App.css';
+import { api } from "../api";
+import axios from "axios";
 
 export default class JobBoard extends React.Component {
     comment = "";
@@ -32,31 +34,24 @@ export default class JobBoard extends React.Component {
         this.CommentForm = this.CommentForm.bind(this);
     }
 
+    //WORKING
     async AddLike(){
-        fetch('/job/'+this.id+'/like' , {
-            method: "POST"
-        })
-        .then((ret) => {
-            ret.json()
-            .then((json) => {
-                console.log("New like count:\n", json.likes);
-                this.setState({likes: json.likes});
-            })
+        await api.post('/job/'+this.id+'/like' , {})
+        .then((res) => {
+            console.log("New like count: " , res.data.likes);
+            this.setState({likes:  res.data.likes});
         })
     }
 
+
+    //WORKING
     async AcceptJob(){
-        fetch('/job/'+this.id+'/accept/'+this.tutorName , {
-            method: "POST"
-        })
-        .then((ret) => {
-            ret.json()
-            .then((json) => {
-                console.log("Updated document:\n", json);
-                this.acceptedTutor = this.tutorName;
-                this.setState({accepted: true});
-            })
-        })
+       await api.post('/job/'+this.id+'/accept/'+this.tutorName, {})
+       .then((res) => {
+            console.log("Updated document:\n", res.data);
+            this.acceptedTutor = this.tutorName;
+            this.setState({accepted: true});
+       })
     }
 
     //why does this hide the job board?
@@ -68,23 +63,19 @@ export default class JobBoard extends React.Component {
         }      
     }
 
+
     async AddComment(){
-        console.log("Adding comment for: "+this.id);
-        await fetch('/job/'+this.id+'/comment' , {
-            method: "POST",
-            headers: new Headers({
-                comment: this.comment,
-                author: this.tutorName
-            })
+        await axios.post('http://localhost:3000/job/'+this.id+'/comment', {} ,{
+            headers: {
+                'comment' : this.comment ,
+                'author' : this.tutorName
+            }
         })
-        .then((ret) => {
-            ret.json()
-                .then((json) => {
-                    console.log("Comments:\n", json.newDoc.comments);
-                    let comments = Array.from(this.state.comments);
-                    comments.push(json.newDoc.comments[json.newDoc.comments.length-1]);
-                    this.setState({commentFormToggle: false , comments});
-            })
+        .then((res) => {
+            //console.log(res.data.newDoc.comments);
+            let comments = Array.from(this.state.comments);
+            comments.push(res.data.newDoc.comments[res.data.newDoc.comments.length-1]);
+            this.setState({commentFormToggle: false , comments});
         })
     }
 
@@ -114,8 +105,9 @@ export default class JobBoard extends React.Component {
                 <h3 className="jobDesc">{this.desc}</h3><hr className="lineStyle"></hr>
                 <h2 className="jobLikes">Likes: {this.state.likes}</h2>
                 {(this.acceptedTutor != "") ? <h3>Accepted by: {this.tutorName}</h3> : <h3>Job Available</h3>}
-                <Button variant="primary" onClick={async() => await this.AcceptJob()}>Accept</Button><Button variant="primary" onClick={async() => await this.AddLike()}>Like</Button>
-                <hr className="lineStyle"></hr>
+                {(this.acceptedTutor == "") ? <Button variant="primary" onClick={async() => await this.AcceptJob()}>Accept</Button> : null}
+                <Button variant="primary" onClick={async() => await this.AddLike()}>Like</Button>
+                
                 <this.CommentForm />
                 <Button variant="primary" onClick={() => this.ToggleCommentForm()}>Back</Button>
             </div>
@@ -128,8 +120,10 @@ export default class JobBoard extends React.Component {
                     <h3 className="jobDesc">{this.desc}</h3><hr className="lineStyle"></hr>
                     <h2 className="jobLikes">Likes: {this.state.likes}</h2>
                     {(this.acceptedTutor != "") ? <h3>Accepted by: {this.tutorName}</h3> : <h3>Job Available</h3>}
-                    <Button variant="primary" onClick={async() => await this.AcceptJob()}>Accept</Button><Button variant="primary" onClick={async() => await this.AddLike()}>Like</Button>
-                    <hr className="lineStyle"></hr>
+                    {(this.acceptedTutor == "") ? <Button variant="primary" onClick={async() => await this.AcceptJob()}>Accept</Button> : null}
+                    
+                    <Button variant="primary" onClick={async() => await this.AddLike()}>Like</Button>
+                    
                     <div className="comment-list-div">
                         {parsedComments.map(comment => (
                             <div className="comment-div" key={Math.random()+Math.random()}>

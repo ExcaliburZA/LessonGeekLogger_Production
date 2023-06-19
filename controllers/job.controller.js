@@ -3,7 +3,25 @@ const Jobs = require('../frontend/src/models/job_model');
 const { ObjectId } = require('mongodb');
 
 exports.AddJob = async function(req, res){
-    console.log();
+    let job = {
+        student_name: req.headers['student_name'],
+        subject: req.headers['subject'],
+        grade: req.headers['grade'],
+        area: req.headers['area'],
+        desc: req.headers['description']
+    }
+
+    Jobs.create(job)
+    .then((result) => {
+        res.status(200).send({result: result})
+    })
+}
+
+exports.DeleteJob = async function(req, res){
+    Jobs.deleteOne({_id: req.params._id})
+    .then((ret) => {
+        res.status(200).send({deleted: ret});
+    })
 }
 
 exports.AcceptJob = async function(req, res){
@@ -30,11 +48,13 @@ exports.AddLike = async function(req, res){
 }
 
 exports.AddComment = async function(req, res){
-    console.log("AddComment()"); 
+    //console.log("AddComment()"); 
     const comment = {
-        comment: req.headers['comment'],
+        comment: req.headers['comment'], 
         author: req.headers['author']
     }
+    //console.log(req.headers);
+    console.log("COMMENT AND AUTHOR: "+comment.comment + " : "+comment.author);
 
     //console.log("Comment: "+commentBody+"\nAuthor: "+author); //working!
     //console.log(comment);
