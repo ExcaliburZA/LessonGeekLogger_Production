@@ -25,7 +25,7 @@ mongoose.Promise = global.Promise;
 
 app.post('/login', user_controller.LogIn)
 
-
+app.post('/user/delete/:_id' , user_controller.DeleteUser)
 
 /*
 app.post('/login/:name/:password' , () => {
