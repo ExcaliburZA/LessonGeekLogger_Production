@@ -40,7 +40,7 @@ app.post('/register', user_controller.RegisterUser);
 //fetch all users endpoint
 app.get('/users' , user_controller.GetAll)
 
-app.post('/user/delete/:_id', user_controller.DeleteUser)
+
 
 //fetch all user profiles still awaiting approval
 app.get('/users/unapproved' , user_controller.GetUnapprovedUsers)
