@@ -101,7 +101,7 @@ exports.ApproveUser = async function(req, res){
 exports.GetAll = async function(req, res){
     Users.find()
     .then(result => {
-        res.send(result);
+        res.send({result});
         console.log("Fetched: \n"+result);
     })
 }
