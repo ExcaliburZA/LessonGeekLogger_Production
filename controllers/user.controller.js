@@ -98,6 +98,13 @@ exports.ApproveUser = async function(req, res){
     })
 }
 
+exports.DeleteUser = async function(req, res){
+    Users.deleteOne({_id: req.params._id})
+    .then((ret) => {
+        res.status(200).send({deleted: ret});
+    })
+}
+
 exports.GetAll = async function(req, res){
     Users.find()
     .then(result => {
