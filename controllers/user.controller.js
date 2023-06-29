@@ -12,9 +12,9 @@ exports.LogIn = async function(req, res) {
     //let password = cryptojs.AES.decrypt(req.headers['password'], secret);
     //password = password.toString(cryptojs.enc.Utf8);
     //console.log(password);
-    let password = req.headers['password'];
+    //let password = req.headers['password'];
     
-    Users.find({name: {$eq: req.headers['name']} , password: {$eq: password}})
+    Users.find({name: {$eq: req.headers['name']} , password: {$eq: req.headers['password']}})
     .then((ret) => {
         //ret.length > 0 ? console.log(true) : console.log(false); shows correctly
         //console.log(ret[0]);
