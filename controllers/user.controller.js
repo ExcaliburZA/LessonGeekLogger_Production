@@ -2,12 +2,13 @@ const Users = require('../frontend/src/models/user_model');
 const jwt = require('jsonwebtoken');
 const e = require('express');
 const cryptojs = require('crypto-js');
+const secrets = require('../secrets');
 
 
 exports.LogIn = async function(req, res) {
     //console.log("Controller LOGIN called");
 
-    let secret = "LUBBEDANI2000";
+    let secret = secrets.SECRET_KEY;
     let password = cryptojs.AES.decrypt(req.headers['password'], secret);
     password = password.toString(cryptojs.enc.Utf8);
     //console.log(password);
