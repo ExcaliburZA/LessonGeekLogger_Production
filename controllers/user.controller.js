@@ -24,7 +24,7 @@ exports.LogIn = async function(req, res) {
         //fails whenever it hits the else
         if(ret.length > 0){ //if found...
             let token = GenToken(ret[0].name , ret[0].password, ret[0].approved, ret[0].role);
-            console.log("User controller says: "+req.params.name+" logged in!\nToken: "+token);           
+            console.log("User controller says: "+ret[0].name+" logged in!\nToken: "+token);           
             res.status(200).send({"token": token}) 
         } else {
             console.log("User controller says: Login failed");
