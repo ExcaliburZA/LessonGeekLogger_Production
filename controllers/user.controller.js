@@ -12,7 +12,7 @@ exports.LogIn = async function(req, res) {
     //let password = cryptojs.AES.decrypt(req.headers['password'], secret);
     //password = password.toString(cryptojs.enc.Utf8);
     //console.log(password);
-    let password = req.headers['password'];
+    let password = req.headers['password'].toString(cryptojs.enc.Utf8);
     
     Users.find({name: {$eq: req.headers['name']} , password: {$eq: password}})
     .then((ret) => {
