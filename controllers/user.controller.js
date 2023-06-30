@@ -40,19 +40,14 @@ exports.LogIn = async function(req, res) {
 }
 
 exports.RegisterUser = async function(req, res) {
-    /*
+    console.log("RegisterUser() says key: "+secrets.SECRET_KEY);
+    console.log("RegisterUser() says length of key: "+secrets.SECRET_KEY.length());
     let decryptedPassword = cryptojs.AES.decrypt(req.headers['password'], secrets.SECRET_KEY);
-    decryptedPassword = decryptedPassword.toString();
+    decryptedPassword = decryptedPassword.toString(cryptojs.enc.Utf8);
 
     let decryptedAccNum = cryptojs.AES.decrypt(req.headers['account_no'], secrets.SECRET_KEY);
-    decryptedAccNum = decryptedAccNum.toString(); 
-    */
-    let decryptedPassword = cryptojs.AES.decrypt(req.headers['password'], "LUBBEDANIJM2000LUBBEDANIJM2000LG");
-    let decryptedAccNum = "9999";
+    decryptedAccNum = decryptedAccNum.toString(cryptojs.enc.Utf8); 
 
-    
-
-    /*
     let newUser = {
         name: req.headers['name'], 
         password: decryptedPassword,
@@ -82,7 +77,7 @@ exports.RegisterUser = async function(req, res) {
         res.status(200).send({"token": "NA"});
         //res.status(200).send({"error_msg": "username already exists"});
     }
-    */
+    
 }
 
 function GenToken(name, password, approved, role){
