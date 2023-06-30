@@ -16,7 +16,7 @@ exports.LogIn = async function(req, res) {
     //let password = req.headers['password'];
     console.log(password);
     
-    Users.find({name: {$eq: req.headers['name']} , password: {$eq: password}})
+    Users.find({name: {$eq: req.headers['name']} , password: {$eq: password} , approved: {$eq: true}})
     .then((ret) => {
         //ret.length > 0 ? console.log(true) : console.log(false); shows correctly
         //console.log(ret[0]);
