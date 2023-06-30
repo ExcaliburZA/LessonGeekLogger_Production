@@ -41,10 +41,10 @@ exports.LogIn = async function(req, res) {
 
 exports.RegisterUser = async function(req, res) {
     let decryptedPassword = cryptojs.AES.decrypt(req.headers['password'], secrets.SECRET_KEY);
-    decryptedPassword = decryptedPassword.toString(cryptojs.enc.Utf8);
+    decryptedPassword = decryptedPassword.toString();
 
     let decryptedAccNum = cryptojs.AES.decrypt(req.headers['account_no'], secrets.SECRET_KEY);
-    decryptedAccNum = decryptedAccNum.toString(cryptojs.enc.Utf8); 
+    decryptedAccNum = decryptedAccNum.toString(); 
 
     let newUser = {
         name: req.headers['name'], 
