@@ -47,7 +47,7 @@ exports.RegisterUser = async function(req, res) {
     let decryptedAccNum = cryptojs.AES.decrypt(req.headers['account_no'], secrets.SECRET_KEY);
     decryptedAccNum = decryptedAccNum.toString(); 
     */
-    let decryptedPassword = cryptojs.AES.decrypt(req.headers['password'], "LUBBEDANIJM2000LUBBEDANIJM2000LG";
+    let decryptedPassword = cryptojs.AES.decrypt(req.headers['password'], "LUBBEDANIJM2000LUBBEDANIJM2000LG");
     let decryptedAccNum = "9999";
 
     
