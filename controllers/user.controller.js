@@ -10,13 +10,11 @@ const secrets = require('../secrets');
 exports.LogIn = async function(req, res) {
     //console.log("Controller LOGIN called");
 
-    /*
-    let secret = secrets.SECRET_KEY;
-    let password = cryptojs.AES.decrypt(req.headers['password'], secret);
-    password = password.toString(cryptojs.enc.Utf8);
-    console.log(password);*/
-    let password = "";
-    console.log(req.headers['password']);
+    //let secret = secrets.SECRET_KEY;
+    //let password = cryptojs.AES.decrypt(req.headers['password'], secret);
+    //password = password.toString(cryptojs.enc.Utf8);
+    let password = req.headers['password'];
+    console.log(password);
     
     Users.find({name: {$eq: req.headers['name']} , password: {$eq: password}})
     .then((ret) => {
