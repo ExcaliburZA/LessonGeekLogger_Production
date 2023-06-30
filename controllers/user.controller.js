@@ -11,9 +11,9 @@ exports.LogIn = async function(req, res) {
     //console.log("Controller LOGIN called");
 
     //let secret = secrets.SECRET_KEY;
-    //let password = cryptojs.AES.decrypt(req.headers['password'], secret);
+    let password = cryptojs.AES.decrypt(req.headers['password'], secrets.SECRET_KEY);
     //password = password.toString(cryptojs.enc.Utf8);
-    let password = req.headers['password'];
+    //let password = req.headers['password'];
     console.log(password);
     
     Users.find({name: {$eq: req.headers['name']} , password: {$eq: password}})
