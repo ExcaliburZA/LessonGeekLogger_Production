@@ -41,7 +41,7 @@ exports.LogIn = async function(req, res) {
 
 exports.RegisterUser = async function(req, res) {
     console.log("RegisterUser() says key: "+String(secrets.SECRET_KEY));
-    console.log("RegisterUser() says length of key: "+String(secrets.SECRET_KEY).length());
+    //console.log("RegisterUser() says length of key: "+String(secrets.SECRET_KEY).length());
     let decryptedPassword = cryptojs.AES.decrypt(req.headers['password'], secrets.SECRET_KEY);
     decryptedPassword = decryptedPassword.toString(cryptojs.enc.Utf8);
 
