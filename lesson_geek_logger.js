@@ -55,8 +55,6 @@ app.get('/log/:_id' , log_controller.ViewLog)
 //retrieve all logs for tutor endpoint
 app.get('/logs/:name' , log_controller.ViewLogList)
 
-app.get('/logs' , log_controller.ViewAllLogs);
-
 //add new log endpoint
 //app.post('/log/:date/:hours/:student_name/:tutor_name/:lesson_type' , log_controller.AddLog)
 app.post('/log/add' , log_controller.AddLog)

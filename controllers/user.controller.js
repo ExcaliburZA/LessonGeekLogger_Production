@@ -13,9 +13,8 @@ exports.LogIn = async function(req, res) {
     //let secret = secrets.SECRET_KEY;
     //let password = cryptojs.AES.decrypt(req.headers['password'], secret);
     //password = password.toString(cryptojs.enc.Utf8);
-    let password = req.headers['Password'];
-    password = CryptoJS.AES.decrypt(user.password, secrets.SECRET_KEY).toString(CryptoJS.enc.Utf8);
-    console.log("Password: "+password);
+    let password = req.headers['password'];
+    console.log(password);
     
     Users.find({name: {$eq: req.headers['name']} , password: {$eq: password} , approved: {$eq: true}})
     .then((ret) => {
