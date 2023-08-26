@@ -9,6 +9,8 @@ const bodyParser = require('body-parser');
 const user_controller = require('./controllers/user.controller');
 const log_controller = require('./controllers/log.controller');
 const job_controller = require('./controllers/job.controller');
+const secrets_controller = require('./controllers/secrets.controller');
+const secrets = require('./secrets.js');
 
 const cors = require('cors')
 
@@ -25,7 +27,7 @@ mongoose.Promise = global.Promise;
 
 app.post('/login', user_controller.LogIn)
 
-app.post('/user/delete/:_id' , user_controller.DeleteUser)
+app.get('/secrets', secrets_controller.GetSecretKey)
 
 /*
 app.post('/login/:name/:password' , () => {
@@ -40,7 +42,7 @@ app.post('/register', user_controller.RegisterUser);
 //fetch all users endpoint
 app.get('/users' , user_controller.GetAll)
 
-
+app.post('/user/delete/:_id' , user_controller.DeleteUser)
 
 //fetch all user profiles still awaiting approval
 app.get('/users/unapproved' , user_controller.GetUnapprovedUsers)
@@ -52,6 +54,8 @@ app.get('/log/:_id' , log_controller.ViewLog)
 
 //retrieve all logs for tutor endpoint
 app.get('/logs/:name' , log_controller.ViewLogList)
+
+app.get('/logs' , log_controller.ViewAllLogs);
 
 //add new log endpoint
 //app.post('/log/:date/:hours/:student_name/:tutor_name/:lesson_type' , log_controller.AddLog)
@@ -94,7 +98,8 @@ app.get('/decode' , (req, res) => {
 
 /* CODE REFERENCED FROM
 https://www.codegrepper.com/profile/philani-sithembiso-ndhlela */
-mongoose.connect("mongodb+srv://sudosam:AdminSam420@lessongeek.jehaxbl.mongodb.net/LessonGeek?retryWrites=true&w=majority" , {
+//mongoose.connect("mongodb+srv://sudosam:AdminSam420@lessongeek.jehaxbl.mongodb.net/LessonGeek?retryWrites=true&w=majority" , {
+mongoose.connect("mongodb+srv://"+secrets.DATABASE_USERNAME+":"+secrets.DATABASE_PASSWORD+"@lessongeek.jehaxbl.mongodb.net/LessonGeek?retryWrites=true&w=majority" , {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
