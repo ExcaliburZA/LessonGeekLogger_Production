@@ -57,3 +57,19 @@ exports.ViewLogList = async function(req, res){
         }
     })
 }
+
+exports.ViewAllLogs = async function(req, res){
+    Logs.find()
+    .then(ret => {
+        if(ret.length > 0){
+            let logs = [];
+            for(let x = 0; x < ret.length; ++x){
+                logs.push(ret[x]);
+            }
+            res.status(200).send({logs: logs})
+            console.log("Log controller says: All logs retrieved: "+ret.length);
+        } else {
+            res.status(200).send({message: "No logs found"});
+        }
+    })
+}
