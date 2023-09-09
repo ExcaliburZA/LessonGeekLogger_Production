@@ -8,7 +8,7 @@ const secrets = require('../secrets');
 
 
 exports.LogIn = async function(req, res) {
-    //console.log("Controller LOGIN called");
+    //console.log("Controller LOGIN called!");
 
     //let secret = secrets.SECRET_KEY;
     //let password = cryptojs.AES.decrypt(req.headers['password'], secret);
